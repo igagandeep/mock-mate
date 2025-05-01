@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MockMate 🎤🤖  
+**Practice job interviews with an AI-powered agent and get instant feedback.**
 
-## Getting Started
+---
 
-First, run the development server:
+## 🚀 Overview
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+**MockMate** is a modern web application designed to help users improve their interview skills through realistic, AI-driven mock interviews.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Users can:
+- Sign up or log in to their account
+- Start a voice-based mock interview with an AI agent
+- Receive instant feedback on their performance
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The goal is to simulate real-world interviews and help users build confidence through regular practice.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🛠️ Built With
 
-To learn more about Next.js, take a look at the following resources:
+- [Next.js](https://nextjs.org/) – React framework for full-stack web apps  
+- [Tailwind CSS](https://tailwindcss.com/) – Utility-first CSS styling  
+- [shadcn/ui](https://ui.shadcn.com/) – Beautiful UI components  
+- [Zod](https://zod.dev/) – Type-safe schema validation  
+- [Vapi](https://vapi.ai/) – Voice AI agent for conducting mock interviews  
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🔐 Features
 
-## Deploy on Vercel
+- 🔑 User authentication (Sign up / Sign in)
+- 🎙️ Real-time voice mock interviews with an AI agent
+- 📊 AI-generated feedback after each session
+- ⚡ Clean, responsive design with reusable components
+- 🧠 Validated user inputs using Zod
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## 🔧 Getting Started
+
+1. **Clone the repo:**
+   ```bash
+   git clone https://github.com/your-username/mockmate.git
+   cd mockmate
+
+2. Install dependencies:
+npm install
+
+3. Set environment variables:
+Create a .env.local file and add any necessary API keys (e.g. Vapi key).
+
+4. Run the app:
+    ```bash
+    npm run dev
