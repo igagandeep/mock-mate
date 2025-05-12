@@ -2,7 +2,7 @@
 import { initializeApp, getApp, getApps } from "firebase/app";
 import {getAuth} from "firebase/auth";
 import {getFirestore} from "firebase/firestore";
-l
+
 const firebaseConfig = {
   apiKey: "AIzaSyC6H74KrfGsWJrCAp0YGvsL6NZOHO2lCRw",
   authDomain: "mockmate-43324.firebaseapp.com",
