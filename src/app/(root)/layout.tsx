@@ -2,7 +2,7 @@
 import { ReactNode } from 'react'
 import Link from "next/link";
 import Image from "next/image";
-import {isAuthenticated, logout} from "@/lib/actions/auth.action";
+import {isAuthenticated} from "@/lib/actions/auth.action";
 import {redirect} from "next/navigation";
 import LogoutButton from '@/components/LogoutButton';
 
