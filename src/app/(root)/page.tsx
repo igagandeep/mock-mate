@@ -5,17 +5,23 @@ import Image from "next/image";
 import InterviewCard from "@/components/InterviewCard";
 import {getCurrentUser, } from "@/lib/actions/auth.action";
 import {getInterviewsByUserId, getLatestInterviews } from "@/lib/actions/general.action";
+import { redirect } from 'next/navigation';
 
 const Page = async () => {
     const user = await getCurrentUser();
 
+      if (!user || !user.id) {
+    redirect("/login");
+  }
+const userId = user.id;
+
     const [userInterviews, latestInterviews] = await Promise.all([
-        await getInterviewsByUserId(user?.id!),
-        await getLatestInterviews({ userId: user?.id! })
+        await getInterviewsByUserId(userId),
+        await getLatestInterviews({ userId: userId! })
     ]);
 
-    const hasPastInterviews = userInterviews?.length > 0;
-    const hasUpcomingInterviews = latestInterviews?.length > 0;
+    const hasPastInterviews = (userInterviews?.length ?? 0)> 0;
+    const hasUpcomingInterviews = (latestInterviews?.length ?? 0 ) > 0;
 
     return (
         <>
@@ -31,7 +37,7 @@ const Page = async () => {
                     </Button>
                 </div>
 
-                <Image src="/robot.png" alt="robo-dude" width={400} height={400} className="max-sm:hidden" />
+                <Image src="/robot.png" alt="robo-dude" width={300} height={250} className="max-sm:hidden" />
             </section>
 
             <section className="flex flex-col gap-6 mt-8">

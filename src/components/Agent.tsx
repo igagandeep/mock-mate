@@ -85,6 +85,7 @@ const Agent = ({ userName, userId, type, interviewId, questions }: AgentProps) =
                 handleGenerateFeedback(messages);
             }
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [messages, callStatus, type, userId]);
 
     const handleCall = async () => {
@@ -95,7 +96,9 @@ const Agent = ({ userName, userId, type, interviewId, questions }: AgentProps) =
                 variableValues: {
                     username: userName,
                     userid: userId,
-                }
+                },
+                    clientMessages: [],
+            serverMessages: [], 
             })
         } else {
             let formattedQuestions = '';
@@ -109,7 +112,9 @@ const Agent = ({ userName, userId, type, interviewId, questions }: AgentProps) =
             await vapi.start(interviewer, {
                 variableValues: {
                     questions: formattedQuestions
-                }
+                },
+                 clientMessages: [], 
+            serverMessages: [],
             })
         }
     }
@@ -128,7 +133,7 @@ const Agent = ({ userName, userId, type, interviewId, questions }: AgentProps) =
         <div className="call-view">
             <div className="card-interviewer">
                 <div className="avatar">
-                    <Image src="/ai-avatar.png" alt="vapi" width={65} height={54} className="object-cover" />
+                    <Image src="/ai-avatar.png" alt="vapi" width={90} height={54} className="object-cover" />
                     {isSpeaking && <span className="animate-speak" />}
                 </div>
                 <h3>AI Interviewer</h3>

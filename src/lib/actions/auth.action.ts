@@ -116,3 +116,21 @@ export async function isAuthenticated() {
 
     return !!user;
 }
+
+export async function logout() {
+    const cookieStore = await cookies();
+
+    cookieStore.set('session', '', {
+        maxAge: 0,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+    })
+    const sessionValue = cookieStore.get('session')?.value;
+    if (sessionValue) {
+        await auth.revokeRefreshTokens(sessionValue);
+    }
+    return {
+        success: true,
+        message: 'Logout successful'
+    }
+}
