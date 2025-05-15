@@ -23,7 +23,6 @@ interface SavedMessage {
 const Agent = ({
   userName,
   userId,
-  type,
   interviewId,
   questions,
   feedbackId,
@@ -89,7 +88,7 @@ const Agent = ({
       handleGenerateFeedback(messages);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [messages, callStatus, type, userId]);
+  }, [messages, callStatus, userId]);
 
   const handleCall = async () => {
     setCallStatus(CallStatus.CONNECTING);
