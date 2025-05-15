@@ -26,6 +26,7 @@ const Agent = ({
   type,
   interviewId,
   questions,
+  feedbackId,
 }: AgentProps) => {
   const router = useRouter();
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -67,12 +68,12 @@ const Agent = ({
   }, []);
 
   const handleGenerateFeedback = async (messages: SavedMessage[]) => {
-    console.log('Generate feedback here.');
 
     const { success, feedbackId: id } = await createFeedback({
       interviewId: interviewId!,
       userId: userId!,
       transcript: messages,
+      feedbackId,
     });
 
     if (success && id) {
@@ -85,11 +86,7 @@ const Agent = ({
 
   useEffect(() => {
     if (callStatus === CallStatus.FINISHED) {
-      if (type === 'generate') {
-        router.push('/');
-      } else {
-        handleGenerateFeedback(messages);
-      }
+      handleGenerateFeedback(messages);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages, callStatus, type, userId]);
@@ -97,37 +94,25 @@ const Agent = ({
   const handleCall = async () => {
     setCallStatus(CallStatus.CONNECTING);
 
-    if (type === 'generate') {
-      await vapi.start(process.env.NEXT_PUBLIC_VAPI_WORKFLOW_ID!, {
-        variableValues: {
-          username: userName,
-          userid: userId,
-        },
-        clientMessages: [],
-        serverMessages: [],
-      });
-    } else {
-      let formattedQuestions = '';
-console.log('questions', questions);
-      if (questions) {
-        formattedQuestions = questions
-          .map((question) => `- ${question}`)
-          .join('\n');
-      }
-
-      await vapi.start(interviewer, {
-        variableValues: {
-          questions: formattedQuestions,
-        },
-        clientMessages: [],
-        serverMessages: [],
-      });
+    let formattedQuestions = '';
+    console.log('questions', questions);
+    if (questions) {
+      formattedQuestions = questions
+        .map((question) => `- ${question}`)
+        .join('\n');
     }
+
+    await vapi.start(interviewer, {
+      variableValues: {
+        questions: formattedQuestions,
+      },
+      clientMessages: ['transcript'],
+      serverMessages: [],
+    });
   };
 
   const handleDisconnect = async () => {
     setCallStatus(CallStatus.FINISHED);
-
     vapi.stop();
   };
 

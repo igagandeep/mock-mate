@@ -8,14 +8,17 @@ import Spinner from '@/components/Spinner';
 interface Props {
   interviewId: string;
   hasFeedback: boolean;
+  currentUserId?: string;
 }
 
 const InterviewActionButton: React.FC<Props> = ({
   interviewId,
   hasFeedback,
+  currentUserId,
 }) => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  if (!currentUserId) return null;
 
   const handleClick = () => {
     setLoading(true);

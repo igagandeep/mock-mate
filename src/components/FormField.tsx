@@ -7,14 +7,15 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
-import {
-  Control,
-  Controller,
-  FieldValues,
-  Path,
-} from 'react-hook-form';
+import { Control, Controller, FieldValues, Path } from 'react-hook-form';
 
-type InputType = 'text' | 'password' | 'email' | 'file' | 'number' | 'datetime-local';
+type InputType =
+  | 'text'
+  | 'password'
+  | 'email'
+  | 'file'
+  | 'number'
+  | 'datetime-local';
 
 interface BaseProps<T extends FieldValues> {
   control: Control<T>;
@@ -26,6 +27,9 @@ interface BaseProps<T extends FieldValues> {
 
 interface InputFieldProps<T extends FieldValues> extends BaseProps<T> {
   variant?: 'input';
+  valueAsNumber?: boolean;
+  min?: number;
+  max?: number;
 }
 
 interface SelectFieldProps<T extends FieldValues> extends BaseProps<T> {
@@ -33,7 +37,9 @@ interface SelectFieldProps<T extends FieldValues> extends BaseProps<T> {
   options: { value: string; label: string }[];
 }
 
-type FormFieldProps<T extends FieldValues> = InputFieldProps<T> | SelectFieldProps<T>;
+type FormFieldProps<T extends FieldValues> =
+  | InputFieldProps<T>
+  | SelectFieldProps<T>;
 
 const FormField = <T extends FieldValues>(props: FormFieldProps<T>) => {
   const { control, name, label, placeholder, type = 'text' } = props;
@@ -47,13 +53,20 @@ const FormField = <T extends FieldValues>(props: FormFieldProps<T>) => {
           <FormLabel>{label}</FormLabel>
           <FormControl>
             {props.variant === 'select' ? (
-              <Select
-                {...field}
-                options={props.options}
-                className="w-full"
-              />
+              <Select {...field} options={props.options} className="w-full" />
             ) : (
-              <Input {...field} placeholder={placeholder} type={type} />
+              <Input
+                {...field}
+                placeholder={placeholder}
+                type={type}
+                {...(type === 'number'
+                  ? {
+                      valueAsNumber: props.valueAsNumber,
+                      min: props.min,
+                      max: props.max,
+                    }
+                  : {})}
+              />
             )}
           </FormControl>
           <FormMessage>{fieldState?.error?.message}</FormMessage>

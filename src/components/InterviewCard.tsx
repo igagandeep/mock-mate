@@ -4,18 +4,23 @@ import { getRandomInterviewCover } from '@/lib/utils';
 import DisplayTechIcons from '@/components/DisplayTechIcons';
 import { getFeedbackByInterviewId } from '@/lib/actions/general.action';
 import InterviewActionButton from './InterviewActionButton';
+import { getCurrentUser } from '@/lib/actions/auth.action';
 
 const InterviewCard = async ({
   id,
-  userId,
   role,
   type,
   techstack,
   createdAt,
 }: InterviewCardProps) => {
+  const currentUser = await getCurrentUser();
+
   const feedback =
-    userId && id
-      ? await getFeedbackByInterviewId({ interviewId: id, userId })
+    currentUser?.id && id
+      ? await getFeedbackByInterviewId({
+          interviewId: id,
+          userId: currentUser.id,
+        })
       : null;
   const normalizedType = /mix/gi.test(type) ? 'Mixed' : type;
   const formattedDate = dayjs(
@@ -66,7 +71,11 @@ const InterviewCard = async ({
         <div className="flex flex-row justify-between">
           <DisplayTechIcons techStack={techstack} />
 
-          <InterviewActionButton interviewId={id!} hasFeedback={!!feedback} />
+          <InterviewActionButton
+            interviewId={id!}
+            hasFeedback={!!feedback}
+            currentUserId={currentUser?.id}
+          />
         </div>
       </div>
     </div>

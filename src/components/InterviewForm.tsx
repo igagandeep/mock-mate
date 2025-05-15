@@ -1,11 +1,9 @@
-// components/InterviewForm.tsx
 'use client';
 
 import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { toast } from 'sonner';
@@ -77,7 +75,7 @@ export default function InterviewForm() {
   };
 
   return (
-    <div className="card-border lg:min-w-[580px]">
+    <div className="flex justify-center card-border lg:min-w-[580px]">
       <div className="flex flex-col items-center justify-center gap-6 card py-14 px-10">
         <h2 className="text-center">Interview Generation</h2>
         <Form {...form}>

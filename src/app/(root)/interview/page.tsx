@@ -16,7 +16,12 @@ const getFormSchema = () => {
   return z.object({
     role: z.string().min(1, 'Role is required'),
     level: z.string().min(1, 'Level is required'),
-    amount: z.number().min(1, 'Amount must be at least 1'),
+    amount: z.coerce
+      .number()
+      .min(1, 'Number of questions must be at least 1')
+      .max(10, 'Maximum 10 questions allowed')
+      .int('Please enter a whole number')
+      .positive('Number of questions cannot be negative'),
     type: z.string().min(1, 'Type is required'),
     techstack: z
       .string()
@@ -36,18 +41,17 @@ export default function InterviewForm() {
 
   const formSchema = getFormSchema();
 
-  
- const form = useForm<z.input<typeof formSchema>>({
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  resolver: zodResolver(formSchema) as any,
-  defaultValues: {
-    role: '',
-    level: 'junior',
-    amount: 3,
-    type: 'technical',
-    techstack: '',
-  },
-});
+  const form = useForm<z.input<typeof formSchema>>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(formSchema) as any,
+    defaultValues: {
+      role: '',
+      level: 'junior',
+      amount: 3,
+      type: 'technical',
+      techstack: '',
+    },
+  });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
@@ -76,58 +80,75 @@ export default function InterviewForm() {
   };
 
   return (
-    <div className="card-border lg:min-w-[580px]">
-      <div className="flex flex-col items-center justify-center gap-6 card py-14 px-10">
-        <h2 className="text-center">Interview Generation</h2>
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="w-full space-y-6 mt-4 form"
-          >
-            <FormField
-              control={form.control}
-              name="role"
-              label="Role"
-              type="text"
-              placeholder="e.g. Frontend Developer"
-            />
-            <FormField
-              control={form.control}
-              name="level"
-              label="Experience Level"
-              variant="select"
-              placeholder="Choose level"
-              options={[
-                { value: 'junior', label: 'Junior' },
-                { value: 'mid', label: 'Mid' },
-                { value: 'senior', label: 'Senior' },
-              ]}
-            />
-            <FormField
-              control={form.control}
-              name="type"
-              label="Interview Type"
-              placeholder="e.g. technical"
-            />
-            <FormField
-              control={form.control}
-              name="amount"
-              label="Number of Questions"
-              type="number"
-            />
-            <FormField
-              control={form.control}
-              name="techstack"
-              label="Tech Stack"
-              type="text"
-              placeholder="e.g. React, Next.js, TypeScript"
-            />
+    <div className="flex justify-center">
+      <div className="card-border lg:min-w-[580px]">
+        <div className="flex flex-col items-center justify-center gap-6 card py-10 px-10">
+          <h2 className="text-center">Interview Generation</h2>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="w-full space-y-6 mt-2 form"
+            >
+              <FormField
+                control={form.control}
+                name="role"
+                label="Role"
+                type="text"
+                placeholder="e.g. Frontend Developer"
+              />
+              <FormField
+                control={form.control}
+                name="level"
+                label="Experience Level"
+                variant="select"
+                placeholder="Choose level"
+                options={[
+                  { value: 'junior', label: 'Junior' },
+                  { value: 'mid', label: 'Mid' },
+                  { value: 'senior', label: 'Senior' },
+                ]}
+              />
 
-            <Button type="submit" disabled={loading} className="w-full">
-              {loading ? 'Creating...' : 'Create Interview'}
-            </Button>
-          </form>
-        </Form>
+              <FormField
+                control={form.control}
+                name="type"
+                label="Interview Type"
+                variant="select"
+                placeholder="Choose type"
+                options={[
+                  { value: 'technical', label: 'Technical' },
+                  { value: 'behavioral', label: 'Behavioral' },
+                  { value: 'mixed', label: 'Mixed' },
+                ]}
+              />
+
+              <FormField
+                control={form.control}
+                name="amount"
+                label="Number of Questions"
+                type="number"
+                valueAsNumber
+                min={1}
+                max={10}
+              />
+              <FormField
+                control={form.control}
+                name="techstack"
+                label="Tech Stack"
+                type="text"
+                placeholder="e.g. React, Next.js, TypeScript"
+              />
+
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full cursor-pointer"
+              >
+                {loading ? 'Creating...' : 'Create Interview'}
+              </Button>
+            </form>
+          </Form>
+        </div>
       </div>
     </div>
   );
