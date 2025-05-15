@@ -6,23 +6,38 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Control, Controller, FieldValues, Path } from 'react-hook-form';
+import { Select } from '@/components/ui/select';
+import {
+  Control,
+  Controller,
+  FieldValues,
+  Path,
+} from 'react-hook-form';
 
-interface FormFieldProps<T extends FieldValues> {
+type InputType = 'text' | 'password' | 'email' | 'file' | 'number' | 'datetime-local';
+
+interface BaseProps<T extends FieldValues> {
   control: Control<T>;
   name: Path<T>;
   label: string;
   placeholder?: string;
-  type: 'text' | 'password' | 'email' | 'file';
+  type?: InputType;
 }
 
-const FormField = <T extends FieldValues>({
-  control,
-  name,
-  label,
-  placeholder,
-  type = 'text',
-}: FormFieldProps<T>) => {
+interface InputFieldProps<T extends FieldValues> extends BaseProps<T> {
+  variant?: 'input';
+}
+
+interface SelectFieldProps<T extends FieldValues> extends BaseProps<T> {
+  variant: 'select';
+  options: { value: string; label: string }[];
+}
+
+type FormFieldProps<T extends FieldValues> = InputFieldProps<T> | SelectFieldProps<T>;
+
+const FormField = <T extends FieldValues>(props: FormFieldProps<T>) => {
+  const { control, name, label, placeholder, type = 'text' } = props;
+
   return (
     <Controller
       control={control}
@@ -31,7 +46,15 @@ const FormField = <T extends FieldValues>({
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
-            <Input placeholder={placeholder} type={type} {...field} />
+            {props.variant === 'select' ? (
+              <Select
+                {...field}
+                options={props.options}
+                className="w-full"
+              />
+            ) : (
+              <Input {...field} placeholder={placeholder} type={type} />
+            )}
           </FormControl>
           <FormMessage>{fieldState?.error?.message}</FormMessage>
         </FormItem>
@@ -39,4 +62,5 @@ const FormField = <T extends FieldValues>({
     />
   );
 };
+
 export default FormField;

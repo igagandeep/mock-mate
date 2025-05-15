@@ -108,7 +108,7 @@ const Agent = ({
       });
     } else {
       let formattedQuestions = '';
-
+console.log('questions', questions);
       if (questions) {
         formattedQuestions = questions
           .map((question) => `- ${question}`)
