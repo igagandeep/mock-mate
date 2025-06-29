@@ -1,63 +1,88 @@
-import React from 'react';
-import InterviewCard from '@/components/InterviewCard';
-import { getCurrentUser } from '@/lib/actions/auth.action';
-import {
-  getInterviewsByUserId,
-  getLatestInterviews,
-} from '@/lib/actions/general.action';
-import { redirect } from 'next/navigation';
-import StartInterviewCTA from '@/components/StartInterviewCTA';
+'use client';
 
-const Page = async () => {
-  const user = await getCurrentUser();
+import { useQuery } from '@tanstack/react-query';
+import { getInterviews } from '@/api/interview';
 
-  if (!user || !user.id) {
-    redirect('/login');
-  }
-  const userId = user.id;
+export default function InterviewsList() {
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ['interviews'],
+    queryFn: getInterviews,
+  });
 
-  const [userInterviews, latestInterviews] = await Promise.all([
-    await getInterviewsByUserId(userId),
-    await getLatestInterviews({ userId: userId! }),
-  ]);
-
-  const hasPastInterviews = (userInterviews?.length ?? 0) > 0;
-  const hasUpcomingInterviews = (latestInterviews?.length ?? 0) > 0;
+  if (isLoading) return <p>Loading...</p>;
+  if (isError) return <p>Error: {error.message}</p>;
 
   return (
-    <>
-      <StartInterviewCTA />
-
-      <section className="flex flex-col gap-6 mt-8">
-        <h2>Your Interviews</h2>
-
-        <div className="interviews-section">
-          {hasPastInterviews ? (
-            userInterviews?.map((interview) => (
-              <InterviewCard {...interview} key={interview.id} />
-            ))
-          ) : (
-            <p>You haven&apos;t taken any interviews yet</p>
-          )}
-        </div>
-      </section>
-
-      <section className="flex flex-col gap-6 mt-8">
-        <h2>Take an Interview</h2>
-
-        <div className="interviews-section">
-          {hasUpcomingInterviews ? (
-            latestInterviews?.map((interview) => {
-              console.log(userId === interview.userId);
-              return (
-              <InterviewCard {...interview} key={interview.id} />
-            )})
-          ) : (
-            <p>There are no new interviews available</p>
-          )}
-        </div>
-      </section>
-    </>
+    <ul>
+      {data.map((interview: any) => (
+        <li key={interview.id}>{interview.title}</li>
+      ))}
+    </ul>
   );
-};
-export default Page;
+}
+
+
+
+// import React from 'react';
+// import InterviewCard from '@/components/InterviewCard';
+// import { getCurrentUser } from '@/lib/actions/auth.action';
+// import {
+//   getInterviewsByUserId,
+//   getLatestInterviews,
+// } from '@/lib/actions/general.action';
+// import { redirect } from 'next/navigation';
+// import StartInterviewCTA from '@/components/StartInterviewCTA';
+
+// const Page = async () => {
+//   const user = await getCurrentUser();
+
+//   if (!user || !user.id) {
+//     redirect('/login');
+//   }
+//   const userId = user.id;
+
+//   const [userInterviews, latestInterviews] = await Promise.all([
+//     await getInterviewsByUserId(userId),
+//     await getLatestInterviews({ userId: userId! }),
+//   ]);
+
+//   const hasPastInterviews = (userInterviews?.length ?? 0) > 0;
+//   const hasUpcomingInterviews = (latestInterviews?.length ?? 0) > 0;
+
+//   return (
+//     <>
+//       <StartInterviewCTA />
+
+//       <section className="flex flex-col gap-6 mt-8">
+//         <h2>Your Interviews</h2>
+
+//         <div className="interviews-section">
+//           {hasPastInterviews ? (
+//             userInterviews?.map((interview) => (
+//               <InterviewCard {...interview} key={interview.id} />
+//             ))
+//           ) : (
+//             <p>You haven&apos;t taken any interviews yet</p>
+//           )}
+//         </div>
+//       </section>
+
+//       <section className="flex flex-col gap-6 mt-8">
+//         <h2>Take an Interview</h2>
+
+//         <div className="interviews-section">
+//           {hasUpcomingInterviews ? (
+//             latestInterviews?.map((interview) => {
+//               console.log(userId === interview.userId);
+//               return (
+//               <InterviewCard {...interview} key={interview.id} />
+//             )})
+//           ) : (
+//             <p>There are no new interviews available</p>
+//           )}
+//         </div>
+//       </section>
+//     </>
+//   );
+// };
+// export default Page;
