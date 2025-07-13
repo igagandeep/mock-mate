@@ -1,38 +1,44 @@
-import dayjs from 'dayjs';
-import Image from 'next/image';
-import { getRandomInterviewCover } from '@/lib/utils';
-import DisplayTechIcons from '@/components/DisplayTechIcons';
-import { getFeedbackByInterviewId } from '@/lib/actions/general.action';
-import InterviewActionButton from './InterviewActionButton';
-import { getCurrentUser } from '@/lib/actions/auth.action';
+"use client";
 
-const InterviewCard = async ({
+import { useEffect, useState } from "react";
+import dayjs from "dayjs";
+import Image from "next/image";
+import { getRandomInterviewCover } from "@/lib/utils";
+import InterviewActionButton from "./InterviewActionButton";
+import { getFeedbackByInterviewId } from "@/api/interview";
+import { InterviewCardProps, Feedback } from "@/types/index";
+
+const InterviewCard = ({
   id,
   role,
   type,
-  techstack,
+  finalized,
   createdAt,
 }: InterviewCardProps) => {
-  const currentUser = await getCurrentUser();
+  const [feedback, setFeedback] = useState<Feedback | null>(null);
 
-  const feedback =
-    currentUser?.id && id
-      ? await getFeedbackByInterviewId({
-          interviewId: id,
-          userId: currentUser.id,
-        })
-      : null;
-  const normalizedType = /mix/gi.test(type) ? 'Mixed' : type;
+  useEffect(() => {
+    async function fetchFeedback() {
+      if (id) {
+        const fb = await getFeedbackByInterviewId(id);
+        setFeedback(fb?.feedback || null);
+      }
+    }
+    fetchFeedback();
+  }, [id]);
+
   const formattedDate = dayjs(
-    feedback?.createdAt || createdAt || Date.now(),
-  ).format('MMM D, YYYY');
+    feedback?.createdAt || createdAt || Date.now()
+  ).format("MMM D, YYYY");
+
+  console.log("feedback", feedback);
 
   return (
     <div className="card-border w-[360px] max-sm:w-full min-h-96">
       <div className="card-interview">
         <div>
           <div className="absolute top-0 right-0 w-fit px-4 py-2 rounded-bl-lg bg-light-600">
-            <p className="badge-text">{normalizedType}</p>
+            <p className="badge-text">{type}</p>
           </div>
 
           <Image
@@ -58,7 +64,7 @@ const InterviewCard = async ({
 
             <div className="flex flex-row gap-2 items-center">
               <Image src="/star.svg" alt="star" width={22} height={22} />
-              <p>{feedback?.totalScore || '---'}/100</p>
+              <p>{feedback?.totalScore || "---"}/100</p>
             </div>
           </div>
 
@@ -69,16 +75,14 @@ const InterviewCard = async ({
         </div>
 
         <div className="flex flex-row justify-between">
-          <DisplayTechIcons techStack={techstack} />
-
           <InterviewActionButton
             interviewId={id!}
-            hasFeedback={!!feedback}
-            currentUserId={currentUser?.id}
+            hasFinalized={finalized ?? false}
           />
         </div>
       </div>
     </div>
   );
 };
+
 export default InterviewCard;

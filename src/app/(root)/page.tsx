@@ -1,88 +1,61 @@
-'use client';
+"use client";
 
-import { useQuery } from '@tanstack/react-query';
-import { getInterviews } from '@/api/interview';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+
+import { getInterviews } from "@/api/interview";
+import { isAuthenticated } from "@/utils/auth";
+
+import StartInterviewCTA from "@/components/StartInterviewCTA";
+import InterviewCard from "@/components/InterviewCard";
+import { Interview } from "@/types/index";
 
 export default function InterviewsList() {
+  const router = useRouter();
+  const [authChecked, setAuthChecked] = useState(false);
+
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      router.push("/sign-in");
+    } else {
+      setAuthChecked(true);
+    }
+  }, [router]);
+
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['interviews'],
+    queryKey: ["interviews"],
     queryFn: getInterviews,
+    enabled: authChecked,
   });
 
+  if (!authChecked) return null;
   if (isLoading) return <p>Loading...</p>;
   if (isError) return <p>Error: {error.message}</p>;
 
+  console.log("interviews", data);
+
   return (
-    <ul>
-      {data.map((interview: any) => (
-        <li key={interview.id}>{interview.title}</li>
-      ))}
-    </ul>
+    <div className="mt-8">
+      <StartInterviewCTA />
+
+      <h2 className="text-2xl font-bold my-4">Your Interviews</h2>
+      {data?.interviews.length > 0 ? (
+        <div className="grid gap-6 grid-cols-3">
+          {data?.interviews.map((iv: Interview, idx: number) => (
+            <InterviewCard
+              key={iv._id || idx}
+              id={iv._id}
+              role={iv.role}
+              type={iv.interviewType}
+              finalized={iv.finalized}
+              createdAt={iv.createdAt}
+            />
+          ))}
+        </div>
+      ) : (
+        <p>You don’t have any interviews yet.</p>
+      )}
+    </div>
   );
 }
-
-
-
-// import React from 'react';
-// import InterviewCard from '@/components/InterviewCard';
-// import { getCurrentUser } from '@/lib/actions/auth.action';
-// import {
-//   getInterviewsByUserId,
-//   getLatestInterviews,
-// } from '@/lib/actions/general.action';
-// import { redirect } from 'next/navigation';
-// import StartInterviewCTA from '@/components/StartInterviewCTA';
-
-// const Page = async () => {
-//   const user = await getCurrentUser();
-
-//   if (!user || !user.id) {
-//     redirect('/login');
-//   }
-//   const userId = user.id;
-
-//   const [userInterviews, latestInterviews] = await Promise.all([
-//     await getInterviewsByUserId(userId),
-//     await getLatestInterviews({ userId: userId! }),
-//   ]);
-
-//   const hasPastInterviews = (userInterviews?.length ?? 0) > 0;
-//   const hasUpcomingInterviews = (latestInterviews?.length ?? 0) > 0;
-
-//   return (
-//     <>
-//       <StartInterviewCTA />
-
-//       <section className="flex flex-col gap-6 mt-8">
-//         <h2>Your Interviews</h2>
-
-//         <div className="interviews-section">
-//           {hasPastInterviews ? (
-//             userInterviews?.map((interview) => (
-//               <InterviewCard {...interview} key={interview.id} />
-//             ))
-//           ) : (
-//             <p>You haven&apos;t taken any interviews yet</p>
-//           )}
-//         </div>
-//       </section>
-
-//       <section className="flex flex-col gap-6 mt-8">
-//         <h2>Take an Interview</h2>
-
-//         <div className="interviews-section">
-//           {hasUpcomingInterviews ? (
-//             latestInterviews?.map((interview) => {
-//               console.log(userId === interview.userId);
-//               return (
-//               <InterviewCard {...interview} key={interview.id} />
-//             )})
-//           ) : (
-//             <p>There are no new interviews available</p>
-//           )}
-//         </div>
-//       </section>
-//     </>
-//   );
-// };
-// export default Page;

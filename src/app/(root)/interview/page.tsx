@@ -1,37 +1,27 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-
-import { Button } from '@/components/ui/button';
-import { Form } from '@/components/ui/form';
-import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
-import { createInterview } from '@/lib/actions/general.action';
-import FormField from '@/components/FormField';
+import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { createInterview } from "@/api/interview";
+import FormField from "@/components/FormField";
 
 const getFormSchema = () => {
   return z.object({
-    role: z.string().min(1, 'Role is required'),
-    level: z.string().min(1, 'Level is required'),
-    amount: z.coerce
+    role: z.string().min(1, "Role is required"),
+    experienceLevel: z.string().min(1, "Level is required"),
+    numQuestions: z.coerce
       .number()
-      .min(1, 'Number of questions must be at least 1')
-      .max(10, 'Maximum 10 questions allowed')
-      .int('Please enter a whole number')
-      .positive('Number of questions cannot be negative'),
-    type: z.string().min(1, 'Type is required'),
-    techstack: z
-      .string()
-      .min(1, 'Tech Stack is required')
-      .transform((val) =>
-        val
-          .split(',')
-          .map((item) => item.trim())
-          .filter(Boolean),
-      ),
+      .min(1, "Number of questions must be at least 1")
+      .max(10, "Maximum 10 questions allowed")
+      .int("Please enter a whole number")
+      .positive("Number of questions cannot be negative"),
+    interviewType: z.string().min(1, "Type is required"),
   });
 };
 
@@ -45,35 +35,32 @@ export default function InterviewForm() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(formSchema) as any,
     defaultValues: {
-      role: '',
-      level: 'junior',
-      amount: 3,
-      type: 'technical',
-      techstack: '',
+      role: "",
+      experienceLevel: "junior",
+      numQuestions: 3,
+      interviewType: "technical",
     },
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
     try {
-      const { role, level, amount, type, techstack } = values;
+      const { role, experienceLevel, numQuestions, interviewType } = values;
       const result = await createInterview({
         role,
-        level,
-        amount,
-        type,
-        techstack,
+        experienceLevel,
+        numQuestions,
+        interviewType,
       });
-
-      if (result?.success && result.id) {
-        toast.success('Interview created!');
-        router.push(`/interview/${result.id}`);
+      if (result?.success && result.interviewId) {
+        toast.success("Interview created!");
+        router.push(`/interview/${result.interviewId}`);
       } else {
-        toast.error(result?.error || 'Failed to create interview');
+        toast.error(result?.error || "Failed to create interview");
       }
     } catch (error) {
-      console.error('Error creating interview:', error);
-      toast.error('Failed to create interview. Please try again.');
+      console.error("Error creating interview:", error);
+      toast.error("Failed to create interview. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -98,45 +85,38 @@ export default function InterviewForm() {
               />
               <FormField
                 control={form.control}
-                name="level"
+                name="experienceLevel"
                 label="Experience Level"
                 variant="select"
                 placeholder="Choose level"
                 options={[
-                  { value: 'junior', label: 'Junior' },
-                  { value: 'mid', label: 'Mid' },
-                  { value: 'senior', label: 'Senior' },
+                  { value: "junior", label: "Junior" },
+                  { value: "mid", label: "Mid" },
+                  { value: "senior", label: "Senior" },
                 ]}
               />
 
               <FormField
                 control={form.control}
-                name="type"
+                name="interviewType"
                 label="Interview Type"
                 variant="select"
                 placeholder="Choose type"
                 options={[
-                  { value: 'technical', label: 'Technical' },
-                  { value: 'behavioral', label: 'Behavioral' },
-                  { value: 'mixed', label: 'Mixed' },
+                  { value: "technical", label: "Technical" },
+                  { value: "behavioral", label: "Behavioral" },
+                  { value: "general", label: "General" },
                 ]}
               />
 
               <FormField
                 control={form.control}
-                name="amount"
+                name="numQuestions"
                 label="Number of Questions"
                 type="number"
                 valueAsNumber
                 min={1}
                 max={10}
-              />
-              <FormField
-                control={form.control}
-                name="techstack"
-                label="Tech Stack"
-                type="text"
-                placeholder="e.g. React, Next.js, TypeScript"
               />
 
               <Button
@@ -144,7 +124,7 @@ export default function InterviewForm() {
                 disabled={loading}
                 className="w-full cursor-pointer"
               >
-                {loading ? 'Creating...' : 'Create Interview'}
+                {loading ? "Creating..." : "Create Interview"}
               </Button>
             </form>
           </Form>

@@ -20,3 +20,9 @@ export const loginUser = async (payload: {
   const response = await axios.post(`${API_BASE_URL}/api/auth/login`, payload);
   return response.data;
 };
+
+// Logout user
+export const logoutUser = async () => {
+  const response = await axios.post(`${API_BASE_URL}/api/auth/logout`);
+  return response.data;
+};

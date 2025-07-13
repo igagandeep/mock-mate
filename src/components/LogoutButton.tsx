@@ -2,10 +2,10 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { logout } from '@/lib/actions/auth.action';
 import { toast } from 'sonner';
 import { Button } from './ui/button';
 import Spinner from './Spinner';
+import { logoutUser } from '@/api/auth';
 
 const LogoutButton = () => {
   const [loading, setLoading] = useState(false);
@@ -14,7 +14,7 @@ const LogoutButton = () => {
   const handleLogout = async () => {
     try {
       setLoading(true);
-      await logout();
+      await logoutUser();
       toast.success('Logged out successfully.');
 
       router.push('/sign-in');
