@@ -1,28 +1,25 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import Spinner from '@/components/Spinner';
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import Spinner from "@/components/Spinner";
 
 interface Props {
   interviewId: string;
-  hasFeedback: boolean;
-  currentUserId?: string;
+  hasFinalized: boolean;
 }
 
 const InterviewActionButton: React.FC<Props> = ({
   interviewId,
-  hasFeedback,
-  currentUserId,
+  hasFinalized,
 }) => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  if (!currentUserId) return null;
 
   const handleClick = () => {
     setLoading(true);
-    const path = hasFeedback
+    const path = hasFinalized
       ? `/interview/${interviewId}/feedback`
       : `/interview/${interviewId}`;
     router.push(path);
@@ -36,10 +33,10 @@ const InterviewActionButton: React.FC<Props> = ({
     >
       {loading ? (
         <Spinner size={18} />
-      ) : hasFeedback ? (
-        'Check Feedback'
+      ) : hasFinalized ? (
+        "Check Feedback"
       ) : (
-        'View Interview'
+        "View Interview"
       )}
     </Button>
   );

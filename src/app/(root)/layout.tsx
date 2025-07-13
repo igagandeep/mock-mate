@@ -1,15 +1,12 @@
-import { ReactNode } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { isAuthenticated } from '@/lib/actions/auth.action';
-import { redirect } from 'next/navigation';
-import LogoutButton from '@/components/LogoutButton';
+import Link from "next/link";
+import Image from "next/image";
+import LogoutButton from "@/components/LogoutButton";
 
-const RootLayout = async ({ children }: { children: ReactNode }) => {
-  const isUserAuthenticated = await isAuthenticated();
-
-  if (!isUserAuthenticated) redirect('/sign-in');
-
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <div className="root-layout">
       <nav className="flex justify-between items-center p-3">
@@ -17,11 +14,9 @@ const RootLayout = async ({ children }: { children: ReactNode }) => {
           <Image src="/logo.png" alt="Logo" width={40} height={20} />
           <h2 className="text-primary-100 text-3xl mt-1">MockMate</h2>
         </Link>
-
-        {isUserAuthenticated && <LogoutButton />}
+        <LogoutButton />
       </nav>
       {children}
     </div>
   );
-};
-export default RootLayout;
+}
